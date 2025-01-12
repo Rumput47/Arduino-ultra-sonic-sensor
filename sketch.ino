@@ -1,47 +1,30 @@
-/*
-VCC to +5V
-GND to ground
-TRIG to digital pin 3
-ECHO to digital pin 5
-*/
- 
-const int TRIG_PIN = 3;
-const int ECHO_PIN = 5;
- 
-void setup() 
-{
-  // initialize serial communication:
-  Serial.begin(9600);
+const unsigned int TRIG_PIN = 3;
+const unsigned int ECHO_PIN = 5;
+const unsigned int BAUD_RATE = 9600;
+
+void setup() {
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
+  Serial.begin(BAUD_RATE);
 }
- 
-void loop()
-{
-  long duration, distanceCm, distanceIn;
- 
+
+void loop() {
   digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
-  duration = pulseIn(ECHO_PIN, HIGH);
- 
-  // convert the time into a distance
-  distanceCm = duration / 29.1 / 2;
-  distanceIn = duration / 74 / 2;
- 
-  if (distanceCm <= 0)
-  {
-    Serial.println("Out of range");
+
+  const unsigned long duration = pulseIn(ECHO_PIN, HIGH);
+  int distance = duration / 29 / 2;
+  
+  if(duration == 0) {
+    Serial.println("Warning: no pulse from sensor");
+  } else {
+    Serial.print("Distance to nearest object: ");
+    Serial.print(distance);
+    Serial.println(" cm");
   }
-  else 
-  {
-    Serial.print(distanceIn);
-    Serial.print("in: ");
-    Serial.print(distanceCm);
-    Serial.print("cm");
-    Serial.println();
-  }
-  delay(1000);
+  
+  delay(10000);
 }
